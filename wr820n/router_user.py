@@ -1,4 +1,4 @@
-from tl820wrn.router_exceptions import BadUserData
+from .router_exceptions import BadUserData
 
 
 class RouterUser:
