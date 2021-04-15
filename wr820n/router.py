@@ -95,6 +95,18 @@ class Router:
             users.append(RouterUser(users_info[user_id]))
         return tuple(users)
 
+    def reboot(self):
+        """Reboots router"""
+        self.__try_request(TDDP.TDDP_REBOOT, TDDP.ASYN)
+
+    def reset(self, confirm=False):
+        """Resets router settings. Be careful using this function
+        Args:
+            confirm (bool): confirm you action by passing True
+        """
+        if confirm:
+            self.__try_request(TDDP.TDDP_RESET, TDDP.ASYN)
+
     def auth(self):
         """Trying to send auth request to router.
         Raises:
