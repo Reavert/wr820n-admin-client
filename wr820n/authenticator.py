@@ -2,7 +2,7 @@ class Authenticator:
     """Class for generating secured tokens"""
 
     def __init__(self, password: str):
-        self.password = password
+        self.auth_key = self.__org_auth_pwd(password)
 
     def __org_auth_pwd(self, password):
         """Return salted password by custom salt values"""
@@ -36,4 +36,4 @@ class Authenticator:
 
     def get_session_id(self, encrypt, salt):
         """Returns result session id salted with encrypt and salt arguments"""
-        return self.__security_encode(encrypt, self.__org_auth_pwd(self.password), salt)
+        return self.__security_encode(encrypt, self.auth_key, salt)

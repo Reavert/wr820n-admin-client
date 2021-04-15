@@ -14,6 +14,7 @@ class Router:
         """
 
     __cmd_prefix = 'main staMgt -add'
+    __default_auth_key = 'WaQ7xbhc9TefbwK'
 
     def __init__(self, url: str, password: str, timeout=3):
         """Router constructor"""
@@ -88,7 +89,7 @@ class Router:
                 key = key_id_value[0]
                 user_id = int(key_id_value[1])
                 value = key_id_value[2]
-                if not user_id in users_info:
+                if user_id not in users_info:
                     users_info[user_id] = {}
                 users_info[user_id][key] = value
         for user_id in users_info:
@@ -106,6 +107,21 @@ class Router:
         """
         if confirm:
             self.__try_request(TDDP.TDDP_RESET, TDDP.ASYN)
+
+    def change_password(self, new_password):
+        """Changes password of router admin-user
+        Args:
+            new_password (str): new password of the router
+        """
+        auth_key = self.authenticator.auth_key
+        self.authenticator = Authenticator(new_password)
+        params = {'code': TDDP.TDDP_CHGPWD, 'asyn': TDDP.SYN, 'auth': auth_key}
+        self.response = requests.post(
+            url=self.url,
+            params=params,
+            data=self.authenticator.auth_key,
+            headers={'Content-Type': 'text/html'},
+            timeout=self.timeout)
 
     def auth(self):
         """Trying to send auth request to router.
@@ -174,7 +190,7 @@ class Router:
                 self.__generate_session_id()
                 self.auth()
                 self.__request(code, asyn, payload)
-            except:
+            except UnauthorizedAccessException:
                 raise RequestException('Unable to auth')
 
     def __request(self, code: int, asyn: int, payload=''):
