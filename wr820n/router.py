@@ -72,20 +72,18 @@ class Router:
         """Returns tuple of users."""
         # TODO: Replace magic number
         info = self.read([13])
-        params = info.split('\r\n')[2:]
+        params = list(info.items())[1:]
         users_info = {}
         users = []
-        for p in params:
-            key_id_value = p.split(' ')
-            if len(key_id_value) == 3:
-                key = key_id_value[0]
-                user_id = int(key_id_value[1])
-                value = key_id_value[2]
+        for key, value in params:
+            for user_data in value:
+                user_id = user_data[0]
+                param_value = user_data[1]
                 if user_id not in users_info:
                     users_info[user_id] = {}
-                users_info[user_id][key] = value
-        for user_id in users_info:
-            users.append(RouterUser(users_info[user_id]))
+                users_info[user_id][key] = param_value
+        for user_id, info in users_info.items():
+            users.append(RouterUser(info))
         return tuple(users)
 
     def read(self, blocks):
