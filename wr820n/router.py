@@ -1,3 +1,5 @@
+import urllib.parse
+
 from .authenticator import Authenticator
 from .tddp_command import TDDPCommand as TDDP
 from .router_exceptions import *
@@ -32,16 +34,6 @@ class Router:
             cmd (str): custom command to send
         """
         self.__try_request(TDDP.TDDP_INSTRUCT, TDDP.SYN, cmd)
-
-    def read(self, cmd: str):
-        """Sends read command to router.
-        Args:
-            cmd (str): read command parameter
-        Returns:
-            str: response text
-        """
-        self.__try_request(TDDP.TDDP_READ, TDDP.SYN, cmd)
-        return self.response.text
 
     def logout(self):
         """Sends logout command to router."""
@@ -78,8 +70,8 @@ class Router:
 
     def get_users(self):
         """Returns tuple of users."""
-        # TODO: Replace magic string
-        info = self.read('13')
+        # TODO: Replace magic number
+        info = self.read([13])
         params = info.split('\r\n')[2:]
         users_info = {}
         users = []
@@ -95,6 +87,39 @@ class Router:
         for user_id in users_info:
             users.append(RouterUser(users_info[user_id]))
         return tuple(users)
+
+    def read(self, blocks):
+        """Reads router data from specific blocks
+        Args:
+            blocks (list): list of block's numbers
+        Returns:
+            dict: parameters stored in blocks
+        """
+        if not blocks:
+            return []
+        result = {}
+        cmd = ''
+        for n in blocks:
+            cmd += str(n)
+            if not n == blocks[-1]:
+                cmd += '#'
+        self.__try_request(TDDP.TDDP_READ, TDDP.ASYN, cmd)
+        lines = self.response.text.split('\r\n')
+        for line in lines:
+            temp = line.split(' ')
+            if len(temp) == 2:
+                key = temp[0]
+                value = urllib.parse.unquote(temp[1])
+                result[key] = value
+            elif len(temp) == 3:
+                key = temp[0]
+                index = int(temp[1])
+                value = urllib.parse.unquote(temp[2])
+                if key in result:
+                    result[key] += [[index, value]]
+                else:
+                    result[key] = [[index, value]]
+        return result
 
     def reboot(self):
         """Reboots router"""
