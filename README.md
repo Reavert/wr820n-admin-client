@@ -8,8 +8,11 @@
 - User's managment;
     - Set upload speed limit;
     - Set download speed limit;
-    - Set name;
-- Receiving user data.
+    - Set user's name;
+- Receiving user data;
+- Rebooting router;
+- Resetting router;
+- Changing password;
 
 ## Requirements 
 General dependencies is presented in *requirements.txt*
@@ -42,7 +45,7 @@ if __name__ == '__main__':
     for user in users:
         print(user)
 
-    # Get info about specific character
+    # Get info about specific user
     specific_user = client.get_user_by_mac(specific_user_mac)
 
     # Check specific user's existence 
