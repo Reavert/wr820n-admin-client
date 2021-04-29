@@ -14,4 +14,3 @@ class TDDPCommand:
     TDDP_CONFIG = 9
     TDDP_CHGPWD = 10
     TDDP_LOGOUT = 11
-    
