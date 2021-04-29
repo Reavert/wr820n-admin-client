@@ -1,5 +1,6 @@
 import urllib.parse
 
+from .block import Block
 from .authenticator import Authenticator
 from .tddp_command import TDDPCommand as TDDP
 from .router_exceptions import *
@@ -8,7 +9,7 @@ import requests
 
 
 class Router:
-    """Class for router managment by HTTP.   
+    """Class for router management by HTTP.
     Args:
         url (str): ip or domain name of router
         password (str): pass key to access to admin panel
@@ -70,8 +71,7 @@ class Router:
 
     def get_users(self):
         """Returns tuple of users."""
-        # TODO: Replace magic number
-        info = self.read([13])
+        info = self.read([Block.STARTTABLE_DATA_ID])
         params = list(info.items())[1:]
         users_info = {}
         users = []
