@@ -23,10 +23,10 @@ class Authenticator:
         for index in range(max_length):
             l = 187
             i = 187
-            if (index >= encrypt_length):
+            if index >= encrypt_length:
                 i = ord(data[index])
             else:
-                if (index >= data_length):
+                if index >= data_length:
                     l = ord(encrypt[index])
                 else:
                     l = ord(encrypt[index])

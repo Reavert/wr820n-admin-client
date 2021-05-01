@@ -157,45 +157,31 @@ class Router:
             raise WrongPasswordException('Wrong password')
 
     def __generate_session_id(self):
-        """Generates session id via authenticator and store it in self.sesion_id
+        """Generates session id via authenticator and store it in self.session_id
         Raises:
             IncorrectResponseFormatException: can not parse response
         """
-        try:
-            keys = self.__get_auth_response_keys(
-                self.__parse_auth_response(self.response.text))
-        except IncorrectResponseFormatException:
-            raise IncorrectResponseFormatException(
-                'Incorrect response format received')
-
         self.session_id = self.authenticator.get_session_id(
-            keys[0], keys[1])
+            self.encrypt_arg, self.salt_arg)
 
-    def __parse_auth_response(self, response: str):
-        """Separates response values.
-        Args:
-            response (str): response data, where stored auth data
-        Returns:
-            [type]: [description]
-        """
-        return response.split('\r\n')
-
-    def __get_auth_response_keys(self, response_values):
-        """Find out the auth-encrypt keys in auth response.
-        Args:
-            response_values (dict): dictionary of auth-response
+    def __get_auth_info(self):
+        """Parse auth-response values.
         Raises:
-            IncorrectResponseFormatException: can not get auth response keys
-        Returns:
-            dict: dictionary of two auth-elements (first: encrypt, second: salt)
+            IncorrectResponseFormatException: can not get auth response values
         """
+        response_values = self.response.text.split('\r\n')
         try:
-            encrypt_arg = response_values[3]
-            salt_arg = response_values[4]
+            self.state = response_values[1]
+            self.login_attempts = response_values[2]
+            self.encrypt_arg = response_values[3]
+            self.salt_arg = response_values[4]
         except IndexError:
-            raise IncorrectResponseFormatException(
-                'Encrypt and salt haven\'t been received')
-        return [encrypt_arg, salt_arg]
+            raise IncorrectResponseFormatException()
+
+    def update_auth_info(self):
+        """Updates (sync) class instance by previous auth-response"""
+        self.__get_auth_info()
+        self.__generate_session_id()
 
     def __try_request(self, code: int, asyn: int, payload=''):
         """Trying to send custom router request
@@ -210,7 +196,7 @@ class Router:
             self.__request(code, asyn, payload)
         except UnauthorizedAccessException:
             try:
-                self.__generate_session_id()
+                self.update_auth_info()
                 self.auth()
                 self.__request(code, asyn, payload)
             except UnauthorizedAccessException:
