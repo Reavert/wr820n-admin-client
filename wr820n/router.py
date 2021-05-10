@@ -99,10 +99,19 @@ class Router:
         return peer_mac
 
     def write(self, block_id, **parameters):
-        """Writes data to specific block"""
+        """
+        Writes data to specific block
+        Args:
+            block_id (int): block id where to set parameters
+            **parameters: custom values of chosen block
+        """
         data = f"id {block_id}\r\n"
         for key, value in parameters.items():
-            data += f"{key} {value}\r\n"
+            if type(value) is dict:
+                for v_key, v_value in value.items():
+                    data += f"{key} {v_key} {v_value}\r\n"
+            else:
+                data += f"{key} {value}\r\n"
         self.__try_request(TDDP.TDDP_WRITE, TDDP.ASYN, data)
 
     def read(self, blocks):
