@@ -98,6 +98,13 @@ class Router:
         peer_mac = self.response.text.split('\r\n')[1]
         return peer_mac
 
+    def write(self, block_id, **parameters):
+        """Writes data to specific block"""
+        data = f"id {block_id}\r\n"
+        for key, value in parameters.items():
+            data += f"{key} {value}\r\n"
+        self.__try_request(TDDP.TDDP_WRITE, TDDP.ASYN, data)
+
     def read(self, blocks):
         """Reads router data from specific blocks
         Args:
