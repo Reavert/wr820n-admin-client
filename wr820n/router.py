@@ -133,9 +133,9 @@ class Router:
                 index = int(temp[1])
                 value = urllib.parse.unquote(temp[2])
                 if key in result:
-                    result[key] += [[index, value]]
+                    result[key][index] = value
                 else:
-                    result[key] = [[index, value]]
+                    result[key] = {index: value}
         return result
 
     def reboot(self):
