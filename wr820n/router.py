@@ -15,6 +15,11 @@ class Router:
         password (str): pass key to access to admin panel
         timeout (int, optional): Timeout of requests. Defaults to 3.
         """
+    # Here are the manually found state codes
+    # Perhaps the names of the variables do not match the state code
+    STATE_UNKNOWN = -1
+    STATE_INITIALIZED = 4
+    STATE_STARTUP = 5
 
     __cmd_prefix = 'main staMgt -add'
     __default_auth_key = 'WaQ7xbhc9TefbwK'
@@ -23,8 +28,9 @@ class Router:
         """Router constructor"""
         self.url = url
         self.authenticator = Authenticator(password)
-        self.__salt1 = ''
-        self.__salt2 = ''
+        self.state = Router.STATE_UNKNOWN
+        self.encrypt_arg = ''
+        self.salt_arg = ''
         self.session_id = ''
         self.response = requests.Response()
         self.timeout = timeout
@@ -85,6 +91,12 @@ class Router:
         for user_id, info in users_info.items():
             users.append(RouterUser(info))
         return tuple(users)
+
+    def get_peer_mac(self):
+        """Gets peer's mac"""
+        self.__try_request(TDDP.TDDP_GETPEERMAC, TDDP.SYN)
+        peer_mac = self.response.text.split('\r\n')[1]
+        return peer_mac
 
     def read(self, blocks):
         """Reads router data from specific blocks
@@ -171,8 +183,8 @@ class Router:
         """
         response_values = self.response.text.split('\r\n')
         try:
-            self.state = response_values[1]
-            self.login_attempts = response_values[2]
+            self.state = int(response_values[1])
+            self.login_attempts = int(response_values[2])
             self.encrypt_arg = response_values[3]
             self.salt_arg = response_values[4]
         except IndexError:
