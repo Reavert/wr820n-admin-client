@@ -1,7 +1,7 @@
-# TP-Link WR820WR Admin client
+# TP-Link WR820N Admin client
 *This set of python scripts provides the ability to manage the router model of TP-Link WR820N*
 
-***NOTE: In current version most of the features provided by the router not implemented.***
+***NOTE: In current version most of the features provided by the router are not implemented.***
 
 ***
 ## Current features: 
