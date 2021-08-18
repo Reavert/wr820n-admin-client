@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
     # Receiving tuple of users
     users = client.get_users()
-    
+
     # Shows list of all discovered users
     print("Users list: ")
     for user in users:
@@ -21,7 +21,7 @@ if __name__ == '__main__':
     specific_user = client.get_user_by_mac(specific_user_mac)
 
     # Check specific user's existence 
-    if not specific_user is None:
+    if specific_user:
         # Set specific user's upload and download speedlimit to 16 KB/s
         client.change_user(specific_user, upload=16, download=16)
 

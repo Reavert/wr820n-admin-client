@@ -19,7 +19,7 @@ class IncorrectResponseFormatException(RouterException):
 
 
 class RequestException(RouterException):
-    """Raises when error occured during the request"""
+    """Raises when error occurred during the request"""
     pass
 
 
