@@ -63,7 +63,7 @@ class Router:
         self.instruction(cmd)
 
     def get_user_by_mac(self, mac: str):
-        """Return user's info by MAC-address
+        """Returns user's info by MAC-address
         Args:
             mac (str): mac-address of user
         Returns:
@@ -74,6 +74,33 @@ class Router:
             if mac == user.mac:
                 return user
         return None
+
+    def get_user_by_name(self, name: str):
+        """
+        Returns user's info by MAC-address
+        Args:
+            name (str): name of user
+        Returns:
+            RouterUser: user's info
+        """
+        total_users = self.get_users()
+        for user in total_users:
+            if name == user.name:
+                return user
+        return None
+
+    def get_online_users(self):
+        """
+        Returns online users
+        Returns:
+            list of RouterUser: list of online users
+        """
+        total_users = self.get_users()
+        online_users = list()
+        for user in total_users:
+            if user.online:
+                online_users.append(user)
+        return online_users
 
     def get_users(self):
         """Returns tuple of users."""
