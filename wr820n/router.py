@@ -82,9 +82,8 @@ class Router:
         users_info = {}
         users = []
         for key, value in params:
-            for user_data in value:
-                user_id = user_data[0]
-                param_value = user_data[1]
+            for user_id in value:
+                param_value = value[user_id]
                 if user_id not in users_info:
                     users_info[user_id] = {}
                 users_info[user_id][key] = param_value
