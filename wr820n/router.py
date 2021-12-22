@@ -71,7 +71,7 @@ class Router:
         """
         total_users = self.get_users()
         for user in total_users:
-            if mac == user.mac:
+            if mac.lower() == user.mac.lower():
                 return user
         return None
 
