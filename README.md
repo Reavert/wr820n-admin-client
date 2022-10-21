@@ -2,6 +2,7 @@
 *This set of python scripts provides the ability to manage the router model of TP-Link WR820N*
 
 ***NOTE: In current version most of the features provided by the router are not implemented.***
+## Archived due to the loss of this router for debugging
 
 ***
 ## Current features: 
